@@ -1,6 +1,9 @@
+import json
 import os
 from flask import Flask
 from flask_marshmallow import Marshmallow
+
+from app.utils.errors import AppError
 from constants import AppSettings
 import sentry_sdk
 from sentry_sdk.integrations.flask import FlaskIntegration
@@ -35,3 +38,9 @@ app.celery = celery
 from app.v1.blueprint import v1_api  # import must come later to avoid circular dependency
 app.register_blueprint(v1_api, url_prefix='/v1/')
 print(app.url_map)
+
+def handle_exception(error):
+    exception = AppError(str(error), 500, error)
+    response = exception.to_json()
+    return response
+app.register_error_handler(Exception, handle_exception)

@@ -3,26 +3,22 @@ services:
   core_api:
     build: .
     image: core:core
-    environment:
-      - FLASK_APP=application.py
-      - APP_SETTINGS=config.TestingConfig
-      - CELERY_BROKER_URL=redis://redis/0
-      - CELERY_BACKEND_URL=redis://redis/0
+    env_file:
+      - .env
     volumes:
       - .:/src
     ports:
       - "8080:8080"
-    command: uwsgi --http :8080 --module application:application --enable-threads
+    command: watchmedo auto-restart --directory=./ --pattern=*.py --recursive -- uwsgi --http :8080 --module application:application --enable-threads
   redis:
     image: redis:5.0.7-alpine
     expose:
       - 6379
   celery_worker:
     image: core:core
-    command: celery worker -A app.celery --loglevel=INFO
-    environment:
-      - CELERY_BROKER_URL=redis://redis/0
-      - CELERY_BACKEND_URL=redis://redis/0
+    command: watchmedo auto-restart --directory=./ --pattern=*.py --recursive -- celery -A app.celery worker --loglevel=INFO
+    env_file:
+      - .env
     volumes:
       - .:/src
     depends_on:
