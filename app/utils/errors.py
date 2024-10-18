@@ -15,9 +15,9 @@ class AppError(Exception):
 
     def to_dict(self):
         return {
-            'error_id': self.id,
-            'message': "An error has occurred, please provide the above error_id to the support team",
-            'status_code': self.status_code
+            "error_id": self.id,
+            "message": "An error has occurred, please provide the above error_id to the support team",
+            "status_code": self.status_code,
         }
 
     def to_json(self):

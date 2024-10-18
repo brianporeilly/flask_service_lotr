@@ -3,6 +3,7 @@ import re
 
 from app import settings
 
+
 class TheOneApiClient(requests.Session):
     def __init__(self):
         super().__init__()

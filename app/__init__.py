@@ -11,16 +11,16 @@ from app.celery_utils import make_celery
 
 
 app = Flask(__name__)
-app.config.from_object(os.environ.get('APP_SETTINGS', AppSettings.TESTING))
+app.config.from_object(os.environ.get("APP_SETTINGS", AppSettings.TESTING))
 
 sentry_sdk.init(
-    dsn=os.environ.get('SENTRY_DSN', ''),
+    dsn=os.environ.get("SENTRY_DSN", ""),
     integrations=[FlaskIntegration()],
     # Set traces_sample_rate to 1.0 to capture 100%
     # of transactions for performance monitoring.
     # We recommend adjusting this value in production.
-    traces_sample_rate=.75,
-    environment=app.config.get('ENV')
+    traces_sample_rate=0.75,
+    environment=app.config.get("ENV"),
 )
 
 print(app.config)
@@ -35,12 +35,18 @@ app.celery = celery
 #                     datefmt='%H:%M:%S',
 #                     level=logging.DEBUG)
 
-from app.v1.blueprint import v1_api  # import must come later to avoid circular dependency
-app.register_blueprint(v1_api, url_prefix='/v1/')
+from app.v1.blueprint import (
+    v1_api,
+)  # import must come later to avoid circular dependency
+
+app.register_blueprint(v1_api, url_prefix="/v1/")
 print(app.url_map)
+
 
 def handle_exception(error):
     exception = AppError(str(error), 500, error)
     response = exception.to_json()
     return response
+
+
 app.register_error_handler(Exception, handle_exception)

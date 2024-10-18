@@ -31,6 +31,7 @@ def lotr_quote(name: str) -> (str, int):
 
     return json.dumps(response), 200
 
+
 def get_random_quote_from_quotes(quotes):
     count = len(quotes)
     if count == 0:
